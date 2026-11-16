@@ -16,6 +16,11 @@ export interface MessageBannerProps {
   primaryText?: string
   /** Text to display beneath the primary text inside the banner */
   secondaryText?: string
+  /** Optional inline link displayed after the secondary text */
+  link?: {
+    label: string
+    onClick: () => void
+  }
   /** Background color - semantic values or hex color (with optional transparency) */
   backgroundColor?: BackgroundColor
   /** Color of the decorative bar and icon - semantic values or hex color */
@@ -51,6 +56,7 @@ export interface MessageBannerProps {
 export const MessageBanner: React.FC<MessageBannerProps> = ({
   primaryText,
   secondaryText,
+  link,
   backgroundColor = "INFO",
   highlightColor = "INFO",
   icon,
@@ -96,6 +102,13 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
     error: AlertCircle
   }
 
+  const linkColorMap: Record<string, string> = {
+    INFO: 'text-sky-700',
+    POSITIVE: 'text-green-700',
+    WARN: 'text-yellow-800',
+    NEGATIVE: 'text-red-700'
+  }
+  const linkColorClass = linkColorMap[highlightColor] ?? 'text-gray-900'
   const IconComponent = icon ? iconMap[icon] : null
   const isSemanticBg = backgroundColor in backgroundColorMap
   const bgColors = isSemanticBg
@@ -176,6 +189,14 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
           {secondaryText && (
             <p className={`text-sm leading-5 ${primaryText ? 'mt-1' : ''}`}>
               {secondaryText}
+              {link && (
+                <span
+                  className={`ml-1 font-medium underline cursor-pointer ${linkColorClass}`}
+                  onClick={link.onClick}
+                >
+                  {link.label}
+                </span>
+              )}
             </p>
           )}
         </div>
